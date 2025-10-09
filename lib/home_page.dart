@@ -12,8 +12,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> values = ["Chat", "Chien", "Renard"];
-  String _selected = "";
+  final List<Animal> _animals = [
+    Animal("Abeille", "🐝"),
+    Animal("Licorne", "🦄"),
+    Animal("Pigeon", "🐦"),
+  ];
+  late Set<Animal> _selection;
+
+  @override
+  void initState() {
+    super.initState();
+    _selection = {_animals[0]};
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,27 +31,45 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         centerTitle: true,
-        actions: [
-          PopupMenuButton<String>(
-            icon: Icon(Icons.settings),
-            onSelected: (newValue) {
-              setState(() {
-                _selected = newValue;
-              });
-            },
-            itemBuilder: (context) {
-              return values.map((animal) {
-                return PopupMenuItem<String>(
-                  value: animal,
-                  child: Text(animal),
-                );
-              }).toList();
-            },
-          ),
-        ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Center(child: Text(_selected)),
+      body: Center(
+        child: Column(
+          children: [
+            SegmentedButton<Animal>(
+              segments: _animals.map((animal) {
+                return ButtonSegment<Animal>(
+                  value: animal,
+                  label: Text(animal.name),
+                  icon: Text(animal.icon),
+                );
+              }).toList(),
+              selected: _selection,
+              onSelectionChanged: (newSet) {
+                setState(() {
+                  _selection = newSet;
+                });
+              },
+            ),
+            Expanded(
+              child: Center(
+                child: Text(
+                  "Mon animal préféré est: \n ${_selection.first.icon} ${_selection.first.name}",
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
+}
+
+class Animal {
+  String name;
+  String icon;
+
+  Animal(this.name, this.icon);
 }
