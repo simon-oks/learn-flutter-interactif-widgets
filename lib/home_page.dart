@@ -12,26 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  bool isOn = true;
-  double min = 0;
-  double max = 100;
-  double current = 33;
-  RugbyClub? rugbyClub;
-
-  Map<String, bool> groceries = {
-    "Banane": false,
-    "Oeufs": false,
-    "Pates": false,
-    "Beurre": false,
-    "Poulet": false,
-    "Mayonnaise": false,
-    "Quinoa": false,
-    "Céréales": false,
-    "Café": false,
-    "Ail": false,
-    "Persil": false,
-    "Courgettes": false,
-  };
+  List<User> users = [
+    User("Gérard", Colors.brown),
+    User("Marie", Colors.purple),
+    User("Stéphane", Colors.blue),
+    User("Johnny", Colors.red),
+    User("Sylvie", Colors.lightGreenAccent),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -41,35 +28,21 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      backgroundColor: isOn ? Colors.white : Colors.black45,
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: groceries.keys.map((key) {
-            return CheckboxListTile(
-              title: Text(key),
-              subtitle: Text(groceries[key]! ? "Dans le panier" : "A acheter"),
-              value: groceries[key],
-              onChanged: (newBool) {
+      body: Center(
+        child: Wrap(
+          children: users.map((user) {
+            return Chip(
+              label: Text(user.name),
+              avatar: CircleAvatar(
+                backgroundColor: user.color,
+                child: Text(user.name[0]),
+              ),
+              onDeleted: () {
                 setState(() {
-                  groceries[key] = newBool ?? false;
+                  users.remove(user);
                 });
               },
             );
-
-            // Row(
-            // children: [
-            //   Text(key),
-            //   Checkbox(
-            //     value: groceries[key],
-            //     onChanged: (newBool) {
-            //       setState(() {
-            //         groceries[key] = newBool ?? false;
-            //       });
-            //     },
-            //   ),
-            // ],
-            // );
           }).toList(),
         ),
       ),
@@ -84,4 +57,11 @@ class Animal {
   String icon;
 
   Animal(this.name, this.icon);
+}
+
+class User {
+  String name;
+  Color color;
+
+  User(this.name, this.color);
 }
