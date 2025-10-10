@@ -12,6 +12,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late TextEditingController _controller;
+
   String _simple = "";
 
   final FocusNode _focus = FocusNode();
@@ -30,6 +32,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -42,39 +56,33 @@ class _HomePageState extends State<HomePage> {
           unfocusMethod1();
         },
         child: Center(
-          child: Column(
-            children: [
-              Text("Valeur de la TextField Simple: $_simple"),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.text,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              children: [
+                Text("Valeur de la TextField Simple: $_simple"),
+                TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.text,
 
-                      onSubmitted: (submittedString) {
-                        setState(() {
-                          _simple = submittedString;
-                        });
+                  onSubmitted: (submittedString) {
+                    setState(() {
+                      _simple = submittedString;
+                    });
+                  },
+                  focusNode: _focus,
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        FocusScope.of(context).requestFocus(_nextFocus);
                       },
-                      focusNode: _focus,
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            FocusScope.of(context).requestFocus(_nextFocus);
-                          },
-                          icon: Icon(Icons.next_plan),
-                        ),
-                        suffixIconColor: Colors.pink,
-                      ),
+                      icon: Icon(Icons.next_plan),
                     ),
+                    suffixIconColor: Colors.pink,
                   ),
-                ],
-              ),
-              SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: TextField(
+                ),
+                SizedBox(height: 24),
+                TextField(
                   focusNode: _nextFocus,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -85,8 +93,25 @@ class _HomePageState extends State<HomePage> {
                     hintText: "Entrez votre nom",
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 24),
+                TextField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText:
+                        "Voyons si vous arrivez à me lire en appuyant sur le button",
+                  ),
+                ),
+                SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: (() => setState(() {
+                    unfocusMethod2();
+                  })),
+                  child: Text("Révèle le texte"),
+                ),
+                Text(_controller.text),
+              ],
+            ),
           ),
         ),
       ),
