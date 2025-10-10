@@ -12,6 +12,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _formKey = GlobalKey<FormState>();
+
   late TextEditingController _controller;
 
   String _simple = "";
@@ -110,6 +112,37 @@ class _HomePageState extends State<HomePage> {
                   child: Text("Révèle le texte"),
                 ),
                 Text(_controller.text),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "L'adresse mail ne peut pas être vide";
+                          } else {
+                            null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Entrez votre adresse mail",
+                          label: Text("Adresse mail"),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            unfocusMethod2();
+                          } else {
+                            print("Nope");
+                          }
+                        },
+                        child: Text("Valider"),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
