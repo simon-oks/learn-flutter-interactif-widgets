@@ -13,6 +13,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isOn = true;
+  double min = 0;
+  double max = 100;
+  double current = 33;
+  RugbyClub? rugbyClub;
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +28,72 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: isOn ? Colors.white : Colors.black45,
       body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text("Couleur de background: ${isOn ? 'Light' : 'Dark'}"),
-            Switch(
-              value: isOn,
-              onChanged: (newBool) {
-                setState(() {
-                  isOn = newBool;
-                });
-              },
-              activeThumbColor: Colors.redAccent,
-              inactiveThumbColor: Colors.orangeAccent,
-              inactiveTrackColor: Colors.lightGreenAccent,
-              activeTrackColor: Colors.yellow,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Couleur de background: ${isOn ? 'Light' : 'Dark'}"),
+                Switch(
+                  value: isOn,
+                  onChanged: (newBool) {
+                    setState(() {
+                      isOn = newBool;
+                    });
+                  },
+                  activeThumbColor: Colors.redAccent,
+                  inactiveThumbColor: Colors.orangeAccent,
+                  inactiveTrackColor: Colors.lightGreenAccent,
+                  activeTrackColor: Colors.yellow,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(min.toString()),
+                Expanded(
+                  child: Slider(
+                    min: min,
+                    max: max,
+                    value: current,
+                    onChanged: (nv) {
+                      setState(() {
+                        current = nv;
+                      });
+                    },
+                    divisions: 5,
+                    activeColor: Colors.pink,
+                    inactiveColor: Colors.black12,
+                  ),
+                ),
+                Text(max.toString()),
+              ],
+            ),
+            Text("Ma valeur du slider = ${current.toInt()}"),
+            Column(
+              children: [
+                Text("Votre club de Ruby Préféré"),
+                Column(
+                  children: RugbyClub.values.map((club) {
+                    return Row(
+                      children: [
+                        Text(club.name),
+                        Radio(
+                          activeColor: Colors.lightGreen,
+                          value: club,
+                          groupValue: rugbyClub,
+                          onChanged: (club) {
+                            setState(() {
+                              rugbyClub = club;
+                            });
+                          },
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
           ],
         ),
@@ -46,6 +101,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+enum RugbyClub { Toulon, Toulouse, Biarritiz, Racing, Clermon }
 
 class Animal {
   String name;
