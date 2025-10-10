@@ -18,6 +18,21 @@ class _HomePageState extends State<HomePage> {
   double current = 33;
   RugbyClub? rugbyClub;
 
+  Map<String, bool> groceries = {
+    "Banane": false,
+    "Oeufs": false,
+    "Pates": false,
+    "Beurre": false,
+    "Poulet": false,
+    "Mayonnaise": false,
+    "Quinoa": false,
+    "Céréales": false,
+    "Café": false,
+    "Ail": false,
+    "Persil": false,
+    "Courgettes": false,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,75 +42,35 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       backgroundColor: isOn ? Colors.white : Colors.black45,
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Couleur de background: ${isOn ? 'Light' : 'Dark'}"),
-                Switch(
-                  value: isOn,
-                  onChanged: (newBool) {
-                    setState(() {
-                      isOn = newBool;
-                    });
-                  },
-                  activeThumbColor: Colors.redAccent,
-                  inactiveThumbColor: Colors.orangeAccent,
-                  inactiveTrackColor: Colors.lightGreenAccent,
-                  activeTrackColor: Colors.yellow,
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text(min.toString()),
-                Expanded(
-                  child: Slider(
-                    min: min,
-                    max: max,
-                    value: current,
-                    onChanged: (nv) {
-                      setState(() {
-                        current = nv;
-                      });
-                    },
-                    divisions: 5,
-                    activeColor: Colors.pink,
-                    inactiveColor: Colors.black12,
-                  ),
-                ),
-                Text(max.toString()),
-              ],
-            ),
-            Text("Ma valeur du slider = ${current.toInt()}"),
-            Column(
-              children: [
-                Text("Votre club de Ruby Préféré"),
-                Column(
-                  children: RugbyClub.values.map((club) {
-                    return Row(
-                      children: [
-                        Text(club.name),
-                        Radio(
-                          activeColor: Colors.lightGreen,
-                          value: club,
-                          groupValue: rugbyClub,
-                          onChanged: (club) {
-                            setState(() {
-                              rugbyClub = club;
-                            });
-                          },
-                        ),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ],
+          children: groceries.keys.map((key) {
+            return CheckboxListTile(
+              title: Text(key),
+              subtitle: Text(groceries[key]! ? "Dans le panier" : "A acheter"),
+              value: groceries[key],
+              onChanged: (newBool) {
+                setState(() {
+                  groceries[key] = newBool ?? false;
+                });
+              },
+            );
+
+            // Row(
+            // children: [
+            //   Text(key),
+            //   Checkbox(
+            //     value: groceries[key],
+            //     onChanged: (newBool) {
+            //       setState(() {
+            //         groceries[key] = newBool ?? false;
+            //       });
+            //     },
+            //   ),
+            // ],
+            // );
+          }).toList(),
         ),
       ),
     );
