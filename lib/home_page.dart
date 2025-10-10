@@ -12,17 +12,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Animal> _animals = [
-    Animal("Abeille", "🐝"),
-    Animal("Licorne", "🦄"),
-    Animal("Pigeon", "🐦"),
-  ];
-  late Set<Animal> _selection;
+  String _simple = "";
 
-  @override
-  void initState() {
-    super.initState();
-    _selection = {_animals[0]};
+  final FocusNode _focus = FocusNode();
+  final FocusNode _nextFocus = FocusNode();
+
+  void unfocusMethod1() {
+    FocusScope.of(context).unfocus();
+  }
+
+  void unfocusMethod2() {
+    FocusScope.of(context).requestFocus(FocusNode());
+  }
+
+  void unfocusMethod3(FocusNode focusNode) {
+    focusNode.unfocus();
   }
 
   @override
@@ -33,34 +37,40 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            SegmentedButton<Animal>(
-              segments: _animals.map((animal) {
-                return ButtonSegment<Animal>(
-                  value: animal,
-                  label: Text(animal.name),
-                  icon: Text(animal.icon),
-                );
-              }).toList(),
-              selected: _selection,
-              onSelectionChanged: (newSet) {
-                setState(() {
-                  _selection = newSet;
-                });
-              },
-            ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  "Mon animal préféré est: \n ${_selection.first.icon} ${_selection.first.name}",
-                  style: Theme.of(context).textTheme.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
+      body: InkWell(
+        onTap: () {
+          unfocusMethod3(_focus);
+        },
+        child: Center(
+          child: Column(
+            children: [
+              Text("Valeur de la TextField Simple: $_simple"),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.text,
+
+                      onSubmitted: (submittedString) {
+                        setState(() {
+                          _simple = submittedString;
+                        });
+                      },
+                      focusNode: _focus,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      FocusScope.of(context).requestFocus(_nextFocus);
+                    },
+                    icon: Icon(Icons.next_plan),
+                  ),
+                ],
               ),
-            ),
-          ],
+              TextField(focusNode: _nextFocus),
+            ],
+          ),
         ),
       ),
     );
