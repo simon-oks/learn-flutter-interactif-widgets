@@ -12,13 +12,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<User> users = [
-    User("Gérard", Colors.brown),
-    User("Marie", Colors.purple),
-    User("Stéphane", Colors.blue),
-    User("Johnny", Colors.red),
-    User("Sylvie", Colors.lightGreenAccent),
-  ];
+  DateTime? _datePicked = DateTime.now();
+  TimeOfDay? _timePicked = TimeOfDay.now();
+
+  Future<void> _pickDate() async {
+    final newDate = await showDatePicker(
+      context: context,
+      firstDate: DateTime(1980),
+      lastDate: DateTime(2222),
+      currentDate: _datePicked,
+      initialEntryMode: DatePickerEntryMode.input,
+    );
+    if (newDate != null && newDate != _datePicked) {
+      setState(() {
+        _datePicked = newDate;
+      });
+    }
+  }
+
+  Future<void> _pickTime() async {
+    final newTime = await showTimePicker(
+      context: context,
+      initialTime: _timePicked ?? TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.input,
+    );
+    if (newTime != null && newTime != _timePicked) {
+      setState(() {
+        _timePicked = newTime;
+      });
+    }
+  }
+
+  String readableDate(DateTime? date) {
+    if (date == null) {
+      return "Aucun date n'a été choisi";
+    } else {
+      final year = date.year;
+      final month = date.month;
+      final day = date.day;
+      return "La date choisi est: $day/$month/$year";
+    }
+  }
+
+  String readableTime() {
+    final hour = _timePicked?.hour;
+    final minute = _timePicked?.minute;
+    return "$hour:$minute";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,39 +69,16 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
-        child: Wrap(
-          children: users.map((user) {
-            return Chip(
-              label: Text(user.name),
-              avatar: CircleAvatar(
-                backgroundColor: user.color,
-                child: Text(user.name[0]),
-              ),
-              onDeleted: () {
-                setState(() {
-                  users.remove(user);
-                });
-              },
-            );
-          }).toList(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(readableDate(_datePicked)),
+            TextButton(onPressed: _pickDate, child: Text("Modifier la date")),
+            Text(readableTime()),
+            TextButton(onPressed: _pickTime, child: Text("Modifier l'heure")),
+          ],
         ),
       ),
     );
   }
-}
-
-enum RugbyClub { Toulon, Toulouse, Biarritiz, Racing, Clermon }
-
-class Animal {
-  String name;
-  String icon;
-
-  Animal(this.name, this.icon);
-}
-
-class User {
-  String name;
-  Color color;
-
-  User(this.name, this.color);
 }
